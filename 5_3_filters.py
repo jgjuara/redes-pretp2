@@ -50,41 +50,62 @@ plt.suptitle("Desenfoque Gaussiano", fontsize=16)
 plt.show()
 
 
-# --- Filtro 2: Aumento de Nitidez (Sharpening) ---
-# Se puede lograr creando un "kernel" de realce de bordes.
-# Un kernel común es el que resta los vecinos del píxel central, amplificando las diferencias.
-sharpening_kernel = np.array([[-1, -1, -1],
-                              [-1,  9, -1],
-                              [-1, -1, -1]])
+# --- Filtro 2: Detección de Bordes con Sobel ---
+# Convertir a escala de grises para la detección de bordes
+gray_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
 
-sharpened_image = cv2.filter2D(original_image, -1, sharpening_kernel)
-sharpened_image_rgb = cv2.cvtColor(sharpened_image, cv2.COLOR_BGR2RGB)
+# Aplicar filtro de Sobel en la dirección X (bordes verticales)
+sobel_x = cv2.Sobel(gray_image, cv2.CV_64F, 1, 0, ksize=3)
+sobel_x_abs = np.absolute(sobel_x)
+sobel_x_uint8 = np.uint8(sobel_x_abs)
+
+# Aplicar filtro de Sobel en la dirección Y (bordes horizontales)
+sobel_y = cv2.Sobel(gray_image, cv2.CV_64F, 0, 1, ksize=3)
+sobel_y_abs = np.absolute(sobel_y)
+sobel_y_uint8 = np.uint8(sobel_y_abs)
 
 print("""
---- Filtro 2: Aumento de Nitidez (Sharpening) ---
-Este filtro realza los bordes y detalles finos en una imagen. Funciona acentuando 
-la diferencia de intensidad entre un píxel y sus vecinos. El "kernel" utilizado
-generalmente tiene un valor central positivo alto y valores negativos a su alrededor.
+--- Filtro 2: Detección de Bordes con Sobel ---
+El filtro de Sobel es un operador diferencial que se utiliza para la detección de
+bordes en una imagen. Calcula el gradiente de la intensidad de la imagen en cada
+píxel, lo que permite identificar áreas donde hay un cambio brusco en la intensidad,
+característico de un borde.
+
+Funciona con dos kernels (máscaras), uno para detectar bordes horizontales y otro
+para bordes verticales.
+
+- Sobel Horizontal (Sobel X): Detecta cambios de intensidad en la dirección horizontal, lo que resalta los bordes verticales.
+- Sobel Vertical (Sobel Y): Detecta cambios de intensidad en la dirección vertical, lo que resalta los bordes horizontales.
 
 ¿Cuándo conviene usarlo?
-- Mejorar detalles: Cuando una imagen parece ligeramente borrosa o desenfocada, este filtro puede hacer que los detalles sean más nítidos y claros.
-- Análisis de texturas: Ayuda a resaltar las texturas y patrones finos en una imagen.
-- Post-procesamiento: Comúnmente usado en fotografía para dar un toque final de nitidez a las imágenes.
-- Advertencia: Puede amplificar el ruido existente en la imagen, por lo que a veces se aplica después de un filtro de reducción de ruido suave.
+- Detección de características: Es fundamental en la visión por computadora para extraer características como bordes y contornos.
+- Segmentación de imágenes: Puede ser un paso previo para segmentar objetos en una imagen.
+- Análisis de formas: Al resaltar los contornos, facilita el análisis de la forma de los objetos.
 ----------------------------------------------------
 """)
 
-# Graficar el efecto del filtro de nitidez
-plt.figure(figsize=(10, 5))
-plt.subplot(1, 2, 1)
+# Graficar el efecto del filtro de Sobel
+plt.figure(figsize=(12, 12))
+
+plt.subplot(2, 2, 1)
 plt.imshow(original_image_rgb)
 plt.title("Imagen Original")
 plt.axis('off')
 
-plt.subplot(1, 2, 2)
-plt.imshow(sharpened_image_rgb)
-plt.title("Filtro de Nitidez Aplicado")
+plt.subplot(2, 2, 2)
+plt.imshow(gray_image, cmap='gray')
+plt.title("Imagen en Escala de Grises")
 plt.axis('off')
 
-plt.suptitle("Aumento de Nitidez", fontsize=16)
+plt.subplot(2, 2, 3)
+plt.imshow(sobel_x_uint8, cmap='gray')
+plt.title("Filtro Sobel Horizontal (X)")
+plt.axis('off')
+
+plt.subplot(2, 2, 4)
+plt.imshow(sobel_y_uint8, cmap='gray')
+plt.title("Filtro Sobel Vertical (Y)")
+plt.axis('off')
+
+plt.suptitle("Detección de Bordes con Sobel", fontsize=16)
 plt.show() 

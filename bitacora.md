@@ -1,5 +1,23 @@
 # Bitácora del Proyecto de Clustering
 
+## 2025-06-16 - Reemplazo de Filtro de Nitidez por Filtro Sobel
+
+### Acciones Implementadas:
+- Se ha modificado el script `5_3_filters.py` para reemplazar el filtro de realce de nitidez (sharpening) por el filtro de detección de bordes de Sobel.
+- El script ahora demuestra cómo aplicar los filtros de Sobel en las direcciones horizontal (X) y vertical (Y).
+- Antes de aplicar Sobel, la imagen se convierte a escala de grises, ya que el operador Sobel trabaja sobre imágenes de un solo canal.
+- Se ha actualizado la salida del script para mostrar una cuadrícula de 2x2 con:
+    1. La imagen original a color.
+    2. La imagen en escala de grises.
+    3. El resultado del filtro Sobel horizontal.
+    4. El resultado del filtro Sobel vertical.
+- Se ha actualizado la explicación en la salida de la consola para describir el funcionamiento y los casos de uso del filtro de Sobel.
+
+### Contexto y Consideraciones:
+- El filtro de Sobel es una técnica fundamental en el preprocesamiento de imágenes para la detección de características, específicamente para encontrar bordes.
+- Mostrar los resultados de los ejes X e Y por separado permite entender cómo el filtro detecta gradientes de intensidad en diferentes orientaciones.
+- Este cambio enriquece el conjunto de herramientas de análisis de imágenes del proyecto, pasando de un simple realce a una técnica de extracción de características más avanzada.
+
 ## 2025-06-15 - Inicialización y Análisis del Proyecto
 
 ### Acciones Implementadas:
