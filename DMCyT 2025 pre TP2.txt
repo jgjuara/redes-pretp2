@@ -1,0 +1,31 @@
+pre TP2: Agrupamiento de imágenes 
+Sebastián Romano, Hernán Varela, Santiago Bezchinsky, Julián Devouassoux Data Mining en Ciencia y Tecnología 
+20 de mayo de 2025 
+1. Introducci 
+El procesamiento de imágenes resulta desafante por su alta dimensionalidad. La estruc­tura de una imagen digital consiste en una matriz de NxM, en donde la subunidad constituyente de la matriz es un pixel que codifca informaci para un color particular. Cada pixel representa la intesidad de luz en ese punto, que generalmente varía entre [0,255], lo que es equivalente a 8 bits. 
+Para representar imágenes a colores, se utiliza un modelo de percepci humana, en donde el color resulta a través de un sistema aditivo. El modelo se basa en la teoría de los componentes primarios del color que son Rojo, Verde y Azul (RGB Red, Green and Blue, por sus siglas en inglés). Por consiguiente, para representar digitalmente una imagen color, se necesitan 3 matrices de NxM . Una para el Rojo, otra para el Verde y otra para el Azul. 
+
+2. Objetivos 
+Familiarizarse con el procesamiento de imágenes. Para ello, se proponen diferentes ma­nipulaciones que permitirán preparar el dataset para la detecci y exploraci de agrupa­mientos naturales. 
+
+3. Estructura de los datos: 
+A partir del siguiente link, se obtendrán las imágenes a color de 210 fores pertenecientes a 10 especies diferentes. Cada imagen consiste en un archivo .PNG de 128 pixeles de ancho por 128 pixeles de profundidad (128x128x3). Adicionlamente, se encuentra el archivo .CSV con las etiquetas (labels) que corresponden a la especie de cada imagen. 
+Pueden usar este tutorial tutorial como referencia para desarrollar este preTP. 
+1 
+
+4. Preprocesamiento de los datos 
+Cargar el dataset y sus respectivas etiquetas. Asegurarse que las imágenes sean com­parables en color, valor, rango y tama. 
+Explorar y grafcar los subconjuntos de imágenes que representan fores de la misma especie. 
+
+5. Manipulaci de datos 
+Convertir una de las imágenes a escala de grises y grafcarla. Si la queremos convertir a blanco y negro (binario), ¿Qué tendríamos que hacer? Explicalo con tus palabras. (Para una implementaci de binarizaci ver cv2.threshold). 
+Generar dos imágenes random: una imagen mezclando los pixels (ver random.shu˜e) y otra mezclando partes de diferentes imágenes. 
+Aplicar dos tipos diferentes de fltros sobre una imagen, explique en qué casos conviene usar cada uno (ver acá para una descripci de fltrado de imagenes, y su implemen­taci en librerías de python). 
+Calcular imagen promedio global y el promedio entre las distintas especies. ¿Se pueden distinguir los promedios? ¿Co quedan los promedios si consideran las imágenes en blanco y negro? 
+
+6. Bqueda de features 
+Analizar las distribuciones de valores de pixels por cada especie. ¿Se puede distinguir una especie en alg rango de color? 
+Realizar una inspecci de las componentes principales (PCA) del dataset completo, y usar las etiquetas para analizar si se pueden identifcar las especies en esta represen­taci. 
+2 
+
+
