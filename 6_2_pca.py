@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+import plotly.express as px
 
 # --- 6.2 Inspección de Componentes Principales (PCA) ---
 
@@ -44,45 +45,32 @@ scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
 
-# 2. Realizar PCA
-print("Realizando PCA para reducir a 2 componentes...")
-pca = PCA(n_components=2)
-principal_components = pca.fit_transform(X_scaled)
+# --- Análisis de Varianza Explicada ---
+print("\nRealizando PCA para analizar la varianza explicada...")
+# No especificamos n_components para calcularlos todos y ver la curva de varianza
+pca_full = PCA().fit(X_scaled)
 
-# Crear un DataFrame con los resultados
-pca_df = pd.DataFrame(data=principal_components, columns=['PC1', 'PC2'])
-pca_df['label'] = labels
+# Graficar la varianza explicada acumulada
+print("Graficando la curva de varianza explicada acumulada...")
+plt.figure(figsize=(10, 6))
+cumulative_variance = np.cumsum(pca_full.explained_variance_ratio_)
+plt.plot(range(1, len(cumulative_variance) + 1), cumulative_variance, marker='o', linestyle='--')
+plt.title('Varianza Explicada Acumulada vs. Número de Componentes')
+plt.xlabel('Número de Componentes')
+plt.ylabel('Varianza Explicada Acumulada')
+plt.grid(True)
+# Encontrar el número de componentes para explicar el 95% de la varianza
+try:
+    n_components_95 = np.where(cumulative_variance >= 0.95)[0][0] + 1
+    plt.axhline(y=0.95, color='r', linestyle='-', label=f'95% Varianza ({n_components_95} componentes)')
+    print(f"Número de componentes necesarios para capturar el 95% de la varianza: {n_components_95}")
+except IndexError:
+    print("No se alcanzó el 95% de la varianza.")
 
-print(f"Varianza explicada por cada componente: {pca.explained_variance_ratio_}")
-print(f"Varianza total explicada por 2 componentes: {np.sum(pca.explained_variance_ratio_):.2f}")
+# Añadir línea vertical para n_components = 2
+variance_at_2 = cumulative_variance[1] # El índice 1 corresponde a 2 componentes
+plt.axvline(x=2, color='g', linestyle='--', label=f'Varianza con 2 componentes ({variance_at_2:.2f})')
 
-
-# 3. Graficar los resultados
-print("Graficando los resultados de PCA...")
-plt.figure(figsize=(14, 10))
-sns.scatterplot(
-    x="PC1", y="PC2",
-    hue="label",
-    palette=sns.color_palette("hsv", n_colors=len(labels_df['label'].unique())),
-    data=pca_df,
-    legend="full",
-    alpha=0.8
-)
-plt.title('Análisis de Componentes Principales (PCA) de las Imágenes de Flores', fontsize=16)
-plt.xlabel('Primer Componente Principal (PC1)')
-plt.ylabel('Segundo Componente Principal (PC2)')
-plt.legend(title='Especie')
-plt.grid()
+plt.legend(loc='best')
+plt.savefig("plots/pca_variance.png")
 plt.show()
-
-print("""
---- ¿Se pueden identificar las especies en esta representación? ---
-El gráfico de PCA nos muestra una 'sombra' 2D de nuestros datos de muy alta dimensionalidad.
-
-- **Agrupamientos (Clusters):** Si las especies son distintas en términos de sus características de píxeles (color, textura, forma), esperaríamos ver agrupamientos de puntos del mismo color en el gráfico. Si los puntos de una especie forman un grupo denso y separado de los demás, significa que PCA ha logrado capturar las características que hacen única a esa especie.
-
-- **Superposición (Overlap):** Si los puntos de diferentes colores (especies) están muy mezclados, significa que, en las dos dimensiones principales de variación, estas especies son muy similares. Esto no implica que no se puedan separar, sino que la separación podría requerir más componentes principales o un método de reducción de dimensionalidad no lineal (como t-SNE o UMAP).
-
-**Conclusión:** La visualización de PCA es una herramienta exploratoria poderosa. Generalmente, se pueden identificar algunas agrupaciones que corresponden a ciertas especies, especialmente aquellas con colores o formas muy distintivas (ej. girasoles amarillos vs. rosas rojas). Sin embargo, es común ver una superposición considerable entre especies que son visualmente parecidas. La baja varianza total explicada (si es el caso) también indica que las dos primeras componentes no capturan toda la complejidad de los datos.
------------------------------------------------------------------
-""") 

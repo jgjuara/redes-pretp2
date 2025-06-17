@@ -26,12 +26,14 @@ color_labels = ('Azul (B)', 'Verde (G)', 'Rojo (R)')
 
 # Crear una figura para las distribuciones de todas las especies
 plt.style.use('seaborn-v0_8-whitegrid')
-fig, axes = plt.subplots(len(species), 1, figsize=(12, 6 * len(species)), sharex=True, sharey=True)
+
+fig, axes = plt.subplots(len(species), 1, figsize=(12, 2 * len(species)), sharex=True, sharey=True)
 fig.suptitle('Distribución de Intensidad de Píxeles por Especie y Canal de Color', fontsize=20)
 
 print("Calculando y graficando las distribuciones de píxeles por especie...")
 
 for i, s in enumerate(species):
+    print(f"Procesando {s}/{len(species)}")
     ax = axes[i]
     species_paths = labels_df[labels_df['label'] == s]['filepath'].tolist()
     
@@ -59,6 +61,7 @@ for i, s in enumerate(species):
     ax.set_xlim(0, 255)
 
 plt.tight_layout(rect=[0, 0.03, 1, 0.97])
+plt.savefig(f'plots/histograma_colores_especies.png')
 plt.show()
 
 print("""

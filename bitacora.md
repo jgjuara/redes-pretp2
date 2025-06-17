@@ -1,5 +1,52 @@
 # Bitácora del Proyecto de Clustering
 
+## 2025-06-17 - Configuración del Reporte para el Estándar NeurIPS
+
+### Acciones Implementadas:
+- Se ha modificado el fichero `report.qmd` para que el formato de salida PDF se ajuste al estándar de la conferencia NeurIPS.
+- Se ha eliminado la configuración manual de formato en el YAML (geometría, tipo y tamaño de fuente, interlineado).
+- En su lugar, se ha añadido una directiva para incluir el paquete de LaTeX `neurips_2022.sty` que se encuentra en el proyecto.
+
+### Contexto y Consideraciones:
+- El objetivo es que el reporte final tenga un formato profesional y consistente con los estándares de publicaciones científicas en el área.
+- Utilizar el paquete `neurips_2022.sty` asegura que todos los elementos del documento (títulos, secciones, texto, etc.) sigan las guías de estilo de NeurIPS.
+- Este cambio centraliza la gestión del formato en el fichero `.sty`, haciendo el `report.qmd` más limpio y enfocado en el contenido.
+
+## 2025-06-17 - Corrección del Tamaño de Figura en Gráfico de Distribución
+
+### Acciones Implementadas:
+- Se ha modificado el script `6_3_pixel_distribution_grays.py` para corregir la visualización de los títulos de los subgráficos.
+- Se redujo la altura total de la figura, cambiando el parámetro `figsize` en `plt.subplots`. La altura ahora se calcula como `2 * len(species)` en lugar de `6 * len(species)`.
+- Se eliminó el ajuste manual de la posición `y` del título, ya que el problema de fondo era el tamaño excesivo del subgráfico y no la posición por defecto del título.
+
+### Contexto y Consideraciones:
+- Los títulos de los subgráficos aparecían "flotando" muy por encima de las curvas de densidad. La causa raíz era una altura de figura desproporcionadamente grande (`12x60` pulgadas), lo que hacía que cada subgráfico fuera muy alto.
+- Al reducir la altura de cada subgráfico, la posición por defecto del título ahora es visualmente correcta y está apropiadamente cerca de la gráfica que describe. Esto mejora significativamente la legibilidad y la estética del gráfico.
+
+## 2025-06-17 - Optimización de Rendimiento del Script de Distribución
+
+### Acciones Implementadas:
+- Se ha modificado el script `6_3_pixel_distribution_grays.py` para solucionar un problema de rendimiento que lo hacía parecer "colgado".
+- Se reemplazó la función `sns.kdeplot` por `sns.histplot` con 256 `bins`. El cálculo de histogramas es computacionalmente mucho más eficiente que la estimación de densidad por kernels (KDE) para conjuntos de datos grandes.
+- Se añadió un indicador de progreso en la consola para informar al usuario sobre qué especie se está procesando.
+- Se optimizó la carga de imágenes leyéndolas directamente en escala de grises (`cv2.IMREAD_GRAYSCALE`) en lugar de convertirlas después de la carga.
+
+### Contexto y Consideraciones:
+- El script procesa todos los píxeles de todas las imágenes, lo que resulta en un gran volumen de datos. La función `kdeplot` era demasiado lenta para esta tarea.
+- La nueva implementación con `histplot` es significativamente más rápida y aún permite una visualización efectiva de la distribución de la intensidad de los píxeles.
+- Las optimizaciones adicionales (indicador de progreso y carga directa en gris) mejoran la experiencia del usuario y la eficiencia del script.
+
+## 2025-06-17 - Corrección de Etiquetas en Gráfico de Distribución
+
+### Acciones Implementadas:
+- Se ha modificado el script `6_3_pixel_distribution_grays.py` para mejorar la legibilidad del gráfico de distribución de píxeles en escala de grises.
+- Se eliminaron las etiquetas de los ejes X e Y de cada subgráfico individual.
+- Se añadieron etiquetas centrales (`supxlabel` y `supylabel`) para toda la figura, proporcionando una descripción clara y única para los ejes compartidos.
+
+### Contexto y Consideraciones:
+- El comportamiento por defecto de Matplotlib con ejes compartidos (`sharex`, `sharey`) es ocultar las etiquetas de los ejes internos para evitar redundancia, lo que podía hacer que el gráfico pareciera incompleto.
+- La centralización de las etiquetas mejora la estética y la claridad del gráfico, haciendo más fácil su interpretación.
+
 ## 2025-06-16 - Reemplazo de Filtro de Nitidez por Filtro Sobel
 
 ### Acciones Implementadas:
@@ -90,4 +137,49 @@
 
 ### Contexto y Consideraciones:
 - La estandarización del tamaño de las imágenes es un paso de preprocesamiento crucial para muchos algoritmos de machine learning, que requieren que los datos de entrada tengan dimensiones consistentes. La elección de `cv2.INTER_AREA` busca minimizar la pérdida de información durante el reescalado.
-- La creación de una grilla de imágenes de especies permite una rápida verificación visual de la diversidad del dataset y facilita la comunicación de los resultados en informes o presentaciones. 
+- La creación de una grilla de imágenes de especies permite una rápida verificación visual de la diversidad del dataset y facilita la comunicación de los resultados en informes o presentaciones.
+
+## 2025-06-17 - Análisis de Distribución de Píxeles en Imágenes en Escala de Grises
+
+### Acciones Implementadas:
+- Se ha modificado el script `6_3_pixel_distribution_binary.py` para cambiar el análisis. En lugar de analizar imágenes binarizadas, ahora analiza la distribución de intensidad de píxeles en escala de grises.
+- Para cada especie, el script:
+    1. Carga todas las imágenes correspondientes.
+    2. Convierte cada imagen a escala de grises.
+    3. Acumula todos los valores de los píxeles (0-255) de las imágenes en escala de grises.
+- Se genera un gráfico de densidad (KDE), con un subgráfico por especie, mostrando la distribución de luminosidad.
+- El gráfico resultante se guarda en `plots/6_3_pixel_distribution_grayscale.png`.
+
+### Contexto y Consideraciones:
+- Se determinó que analizar la distribución de una imagen binarizada (con solo dos valores posibles) era poco informativo, ya que solo muestra la proporción entre píxeles de primer y segundo plano.
+- El nuevo análisis sobre la escala de grises es más detallado. Permite observar la distribución completa de la luminosidad de las flores de cada especie, independientemente de su color.
+- Este enfoque puede revelar patrones en el brillo y contraste de las flores que podrían ser útiles para la clasificación, complementando el análisis de los canales de color individuales.
+
+## 2025-06-17 - Análisis de Varianza Explicada en PCA
+
+### Acciones Implementadas:
+- Se ha modificado el script `6_2_pca.py` para añadir un análisis de la varianza explicada por los componentes principales.
+- Antes de la visualización de 2D, el script ahora realiza un PCA con todos los componentes posibles.
+- Se ha añadido un nuevo gráfico que muestra la curva de varianza explicada acumulada en función del número de componentes.
+- El gráfico incluye una línea de referencia horizontal para el 95% de la varianza, y el script imprime en consola el número exacto de componentes necesarios para alcanzar este umbral.
+- Se ha añadido una línea de referencia vertical en `n=2` componentes para visualizar directamente cuánta varianza es capturada por la representación 2D, junto con una etiqueta que muestra el valor exacto.
+
+### Contexto y Consideraciones:
+- La visualización de PCA en solo dos dimensiones es útil para una inspección rápida, pero a menudo captura una porción muy pequeña de la varianza total de los datos, lo que puede ser engañoso.
+- El gráfico de varianza acumulada, ahora enriquecido con las líneas de referencia, permite cuantificar de forma precisa cuánta información se "pierde" al reducir la dimensionalidad a dos componentes.
+- Ayuda a determinar el número óptimo de componentes a retener para futuros modelos de machine learning, buscando un equilibrio entre la reducción de la complejidad y la conservación de la información de los datos.
+- Este análisis proporciona una comprensión más profunda de la estructura intrínseca del conjunto de datos de imágenes.
+
+## 2025-06-17 - Generación de Gráfico PCA Interactivo
+
+### Acciones Implementadas:
+- Se ha modificado el script `6_2_pca.py` para generar una versión interactiva del gráfico de dispersión de PCA.
+- Se añadió la librería `plotly` al fichero `requirements.txt` como una nueva dependencia del proyecto.
+- El script ahora produce dos gráficos de PCA:
+    1. La versión estática original, guardada como imagen (`pca_plot.png`).
+    2. Una nueva versión interactiva creada con `plotly.express`, que se guarda como un fichero HTML (`interactive_pca_plot.html`) y se abre automáticamente en un navegador.
+- En el gráfico interactivo, al pasar el cursor sobre un punto de datos, ahora se muestra la ruta del fichero de la imagen correspondiente.
+
+### Contexto y Consideraciones:
+- Un gráfico interactivo permite una exploración de datos mucho más rica que uno estático. Es posible hacer zoom en clusters de interés, filtrar datos por categoría haciendo clic en la leyenda y obtener información específica de puntos de datos individuales.
+- La capacidad de ver el nombre del fichero de la imagen al pasar el cursor es especialmente útil para identificar rápidamente ejemplos específicos, como outliers o puntos en la frontera entre dos clusters, facilitando un análisis más profundo. 

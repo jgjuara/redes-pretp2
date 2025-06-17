@@ -1,25 +1,19 @@
 ---
 title: "pre TP2: Agrupamiento de imágenes"
 subtitle: "Data Mining en Ciencia y Tecnología - Reporte de Soluciones"
-author: "Tu Nombre"
+author: "Juan Gabriel Juara"
 date: today
 format:
   pdf:
     documentclass: article
-    fontfamily: times
-    fontsize: 11pt
-    geometry:
-      - top=1in
-      - bottom=1in
-      - left=1in
-      - right=1in
-    linestretch: 1.2
+    include-in-header:
+      - text: |
+          \usepackage{neurips_2022}
   html:
     theme: cosmo
     toc: true
     number-sections: true
 ---
-
 
 # 1. Introducción
 
@@ -75,101 +69,69 @@ En la figura 4 se acompaña el resultado de cada binarización con el histograma
 
 ## 5.2. Generación de imágenes aleatorias
 
-Implementa y muestra los resultados de las dos formas de generación de imágenes aleatorias solicitadas: mezclando píxeles y combinando partes de otras imágenes.
+A partir de la imagen 0001.png se sintetizó una nueva imagen, para ello se tomaron los pixeles en RGB, se aplanó la matriz de pixeles y se remuestrearon aleatoriamente sin reemplazo. El resultado se visualiza en la figura 5.
 
-```{python}
-#| label: imagenes-random
-#| echo: true
-#| eval: false
-#| fig-cap: "Imágenes generadas aleatoriamente."
+![Figura 5. Aleatorización de pixeles de una imagen](plots/random_pixels_shuffled.png)
 
-# # Código para generar y mostrar las imágenes aleatorias
-```
+A partir de las imágenes '0207.png', '0005.png', '0014.png' y '0167.png' se sintetizó una nueva imagen tomando de cada una la esquina izquierda superior, la esquina derecha superior, la esquina izquiera inferior y la esquina derecha inferior respectivamente. Para ello se toman las dimensiones de las imágenes, se toma el punto medio del ancho y del alto, y para cada imagen se toma la sección correspondiente de la matriz.
+
+
 
 ## 5.3. Aplicación de filtros
 
-Aplica al menos dos tipos de filtros diferentes a una imagen. Muestra los resultados y explica en qué consisten los filtros y en qué escenarios de aplicación sería útil cada uno.
+En la figura 6 se muestra el resultado de aplicar el filtro del operador Sobel sobre la dirección X y la dirección Y. Este operador transforma el valor de cada pixel en función de la magnitud de cambio de los valores de los pixeles adyacentes en una de las direcciones X o Y. En la implementación elegida se usa `filters.sobel_v` y `filters.sobel_h` que equivalen a realizar una convolución sobre la matriz aplicando los siguientes kernels:
 
-```{python}
-#| label: filtros
-#| echo: true
-#| eval: false
-#| fig-cap: "Aplicación de filtros a una imagen."
+```python
+sobel_v_kernel = np.array([[-1, 0, 1],
+                           [-2, 0, 2],
+                           [-1, 0, 1]], dtype=np.float32)
 
-# from skimage import filters
-
-# # ... tu código para aplicar y mostrar filtros ...
-# # ej. filters.gaussian(), filters.sobel()
-
+sobel_h_kernel = np.array([[-1, -2, -1],
+                           [ 0,  0,  0],
+                           [ 1,  2,  1]], dtype=np.float32)
 ```
 
-**Discusión sobre filtros:**
 
-*Explica aquí los filtros que usaste, cómo funcionan y para qué sirven.*
+
+![Figura 6. Aplicación de filtros](plots/sobel_filters2.png)
+
+Se destaca que aplicar el filtro vertical ha permitido resaltar el contorno de la figura dentro del recuadro 1, que en la imagen original mostraba un contraste tenue. Mientras que aplicar el filtro horizontal ha resaltado por ejemplo el contraste de la proyección de sombras sobre el propio pétalo de las flores en el recuadro 2, además de los bordes de la flor. Por otra parte, cabe señalar que el gradiente resultante de la aplicación de los filtros puede tomar valores positivos o negativos, de modo que los bordes se verán oscuros o claros en la representación gráfica según sea la distribución de brillo. Por ejemplo se observa que la aplicación del filtro horizontal resulta en un gradiente positivo sobre el borde superior de la flor, mientras que da un gradiente negativo en el borde inferior. 
 
 ## 5.4. Imagen promedio
 
-Calcula y visualiza la imagen promedio de todo el dataset. Luego, calcula la imagen promedio para cada especie y discute si los promedios permiten distinguir entre especies.
+En las figuras 7 y 8 se muestra la representación gráfica de promediar todas las imágenes de cada especie tanto a color como en blanco y negro. Para promediar las imágenes en blanco y negro se realizó en este caso la binarización de las mismas mediantes el método de Otsu. Se utilizó este método ya que las diferencias de iluminación y escala de brillo entre las diferentes imágenes y diferentes especies podía implicar introducir un sesgo inesperado al elegir un umbral fijo para todo el conjunto de imágenes.
 
-```{python}
-#| label: imagen-promedio
-#| echo: true
-#| eval: false
-#| fig-cap: "Imagen promedio global y por especie."
+Se observa en la figura 7 que la principal diferencia que se percibe a simple vista entre las especies radica en el color predominante de cada una.
 
-# # ... tu código para calcular y mostrar las imágenes promedio ...
-```
+![Figura 7. Promedio de imágenes a color](plots/average_Color.png)
 
-**Análisis de promedios:**
+Como muestra la figura 8 al binarizar las mismas los atributos resultantes que se perciben a simple vista son la forma del contorno de la flor y el brillo promedio la misma, sin embargo en un análisis visual no parece haber diferencias particulares a nivel especie aunque es posible agruparlas por similitud. a) especie 0, 5 y 8, b) especies 2 y 4, y c) las especices restantes.
 
-*Discute tus hallazgos aquí. ¿Son distinguibles los promedios?*
+![Figura 8. Promedio de imágenes en blanco y negro](plots/average_Grises.png)
 
-# 6. Búsqueda de features
-
-Análisis de características extraídas de las imágenes.
 
 ## 6.1. Distribución de píxeles
 
-Analiza y grafica las distribuciones de los valores de los píxeles (histogramas de color) para cada especie. Discute si estas distribuciones son suficientes para diferenciar algunas de las clases.
+A partir del conjunto de imagenes de cada especie se grafico en la figura 9 la distribución de densidad de pixeles por valor para cada uno de los canal RGB. 
 
-```{python}
-#| label: distribucion-pixeles
-#| echo: true
-#| eval: false
-#| fig-cap: "Histogramas de color por especie."
 
-# # ... tu código para graficar los histogramas de RGB por especie ...
-```
+![Figura 9. Densidad de pixeles por intesidad para cada uno de los canales RGB por especie](plots/histograma_colores_especies.png)
 
-**Análisis de distribución de píxeles:**
+Se puede observar en la figura 9 que algunas especies son distinguibles a simple vista según su distribución. Las especies 2, 7, y 4 son en una lectura inicial las que presentan distribuciones más características. La especie 2 tiene una alta densidad de pixeles de baja intesidad en el canal azul junto una densidad comparativamente alta (respecto al resto de las especies) de pixeles en el canal rojo de alta intesidad. La especie 7 también muestra una alta densidad de pixeles en el canal azul a baja intesidad pero en ese caso acompañados por una concentración de pixeles en el canal verde a media intensidad. Por último la especie 4 se caracteriza por tener una alta densidad de pixeles de baja intesidad en los tes canales en simultáneo.
 
-*Comenta si observas patrones distintivos en los histogramas de color para las diferentes especies.*
 
 ## 6.2. Análisis de Componentes Principales (PCA)
 
-Realiza un análisis de componentes principales sobre el conjunto de imágenes. Proyecta los datos en las dos primeras componentes principales y grafica el resultado, coloreando cada punto según su etiqueta de especie. Analiza si PCA permite una buena separación de las clases.
+Se realizó un análisis de componentes principales (PCA) del dataset. La dimensión total del dataset consiste en 210 registros de 49125 variables. Primero se estandarizaron los valores respecto a la media de cada variable y luego se aplicó PCA. La figura 10 muestra el % de varianza explicada en función de la cantidad de componentes tomadas.
 
-```{python}
-#| label: pca
-#| echo: true
-#| eval: false
-#| fig-cap: "Visualización de las dos primeras componentes principales."
+![Figura 10. Porcentaje de varianza explicada según cantidad de componentes](plots/pca_variance.png)
 
-# from sklearn.decomposition import PCA
-# from sklearn.preprocessing import StandardScaler
+Se observa que crecimiento varianza explicada alcanza el 25% con 2 componentes y el 95% con 153 componentes. Esto implica que la dimension del dataset puede ser reducida desde las 49125 hasta las 153 componentes con solo un 5% de pérdida de la varianza. 
 
-# # ... tu código para aplanar imágenes, escalar y aplicar PCA ...
-# # ... luego, el código para graficar el scatter plot de PC1 vs PC2 ...
-```
+En la figura 11 se representan todos los registros en las dimensiones de los dos primeros componentes principales que como se expresó anteriormente explican el 25% de la varianza. 
 
-**Análisis de PCA:**
 
-*Discute si las especies forman grupos separables en el espacio de las componentes principales. ¿Qué te dice esto sobre la estructura de los datos?*
+![Figura 11. PCA 1 vs PCA 2](plots/pca_plot.png)
 
-# 7. Conclusiones
+Se observa que si bien algunas especies parecen agruparse en ciertas regiones del plano: la especie 2 en la esquina inferior izquierda, la especie 4 en la region superior izquierda; existe un solapamiento entre los puntos que hace dificil una separación espacial clara con solo 2 componentes. Es recomendable utilizar más componentes para poder separar las especies con precisión.
 
-Resume los resultados más importantes de tu trabajo. ¿Qué aprendiste sobre el procesamiento de imágenes y la preparación de datos para el clustering? ¿Qué técnicas fueron más útiles?
-
-# Referencias
-
-Aquí puedes listar las referencias que hayas utilizado, como la documentación de las librerías, artículos o tutoriales. 

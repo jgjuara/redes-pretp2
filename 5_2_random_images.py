@@ -59,7 +59,7 @@ class_0_files = labels_df[labels_df['label'] == 0]['file'].tolist()
 class_7_files = labels_df[labels_df['label'] == 7]['file'].tolist()
 
 # Seleccionar 2 imágenes de cada clase
-# random.seed(42) # Asegurar que la muestra sea la misma cada vez
+random.seed(42) # Asegurar que la muestra sea la misma cada vez
 selected_files_0 = random.sample(class_0_files, 2)
 selected_files_7 = random.sample(class_7_files, 2)
 
@@ -71,7 +71,9 @@ print(f"Imágenes seleccionadas: {selected_files}")
 
 images = [cv2.imread(p) for p in random_image_paths]
 
-
+print("Ejemplo array de imagen[0]")
+print(images[0])
+print(images[0].shape)
 height, width, _ = images[0].shape
 part_h, part_w = height // 2, width // 2
 
@@ -89,24 +91,36 @@ composite_image[part_h:height, 0:part_w] = images[2][part_h:height, 0:part_w]
 composite_image[part_h:height, part_w:width] = images[3][part_h:height, part_w:width]
 
 composite_image_rgb = cv2.cvtColor(composite_image, cv2.COLOR_BGR2RGB)
+###################
 
-# Graficar las 4 imágenes originales y la imagen compuesta
-plt.figure(figsize=(12, 10))
-plt.suptitle("Generación de Imagen Compuesta", fontsize=16)
+composite_image[part_h:height, part_w:width] = images[3][part_h:height, part_w:width]
+
+composite_image_rgb = cv2.cvtColor(composite_image, cv2.COLOR_BGR2RGB)
+
+# --- Graficar las 4 imágenes originales ---
+fig_sources, axes = plt.subplots(2, 2, figsize=(8, 8))
+fig_sources.suptitle("Imágenes Fuente para la Composición", fontsize=16)
+axes = axes.flatten()
 
 for i, img_path in enumerate(random_image_paths):
     img = cv2.imread(img_path)
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    plt.subplot(2, 3, i + 1)
-    plt.imshow(img_rgb)
-    plt.title(f"Fuente {i+1}")
-    plt.axis('off')
+    ax = axes[i]
+    ax.imshow(img_rgb)
+    ax.set_title(f"Fuente {i+1}: {os.path.basename(img_path)}")
+    ax.axis('off')
 
-plt.subplot(2, 3, 5) # Poner la imagen compuesta en el centro
+plt.tight_layout(rect=[0, 0, 1, 0.95])
+plt.savefig('plots/composite_source_images.png')
+plt.show()
+
+# --- Graficar la imagen compuesta en una figura separada ---
+plt.figure(figsize=(6, 6))
 plt.imshow(composite_image_rgb)
-plt.title("Imagen Compuesta")
+plt.title("Imagen Compuesta Final")
 plt.axis('off')
+plt.tight_layout()
+plt.savefig('plots/composite_image_final.png')
+plt.show()
 
-plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-plt.savefig('plots/composite_image.png')
-plt.show() 
+

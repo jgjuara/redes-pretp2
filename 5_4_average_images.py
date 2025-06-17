@@ -76,6 +76,7 @@ def process_and_display_averages(labels_df, color_mode=cv2.IMREAD_COLOR, image_t
             plt.axis('off')
 
     plt.tight_layout(rect=[0, 0.03, 1, 0.97])
+    plt.savefig(f'plots/average_{image_type}.png')
     plt.show()
 
     print(f"\n--- Análisis de Distinguibilidad ({image_type}) ---")
@@ -102,14 +103,16 @@ process_and_display_averages(labels_df, color_mode=cv2.IMREAD_COLOR, image_type=
 
 
 # --- Procesar para imágenes en blanco y negro (binarizadas) ---
-def load_and_binarize_images(paths, threshold_value=127):
-    """Carga imágenes, las convierte a escala de grises y las binariza."""
+def load_and_binarize_images(paths):
+    """Carga imágenes, las convierte a escala de grises y las binariza usando el método de Otsu."""
     images = []
     for path in paths:
         if os.path.exists(path):
             img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
             if img is not None:
-                _, binary_img = cv2.threshold(img, threshold_value, 255, cv2.THRESH_BINARY)
+                # El método de Otsu calcula automáticamente el umbral óptimo.
+                # El valor 0 para el umbral es ignorado.
+                _, binary_img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
                 images.append(binary_img)
     return images
 
