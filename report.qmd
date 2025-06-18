@@ -1,6 +1,6 @@
 ---
 title: "pre TP2: Agrupamiento de imágenes"
-subtitle: "Data Mining en Ciencia y Tecnología - Reporte de Soluciones"
+subtitle: "Data Mining en Ciencia y Tecnología"
 author: "Juan Gabriel Juara"
 date: today
 format:
@@ -14,18 +14,6 @@ format:
     toc: true
     number-sections: true
 ---
-
-# 1. Introducción
-
-Aquí puedes escribir una breve introducción al trabajo práctico, similar a la que se encuentra en el enunciado. Puedes explicar el contexto del problema de agrupamiento de imágenes y la importancia del preprocesamiento de datos en este dominio.
-
-# 2. Objetivos
-
-En esta sección, enumera los objetivos principales del trabajo, tal como se describen en el enunciado. El objetivo es familiarizarse con el procesamiento de imágenes y la preparación de un dataset para el análisis de agrupamiento.
-
-# 3. Estructura de los datos
-
-Describe brevemente el conjunto de datos utilizado. Menciona el origen de los datos (Kaggle), el número de imágenes y clases, y las características de las imágenes (dimensiones, formato, etc.).
 
 
 
